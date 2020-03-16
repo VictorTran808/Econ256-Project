@@ -1,0 +1,12 @@
+name: Test-Dashboard
+title: Test-Dashboard
+username:
+account: victortran
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1955308
+bundleId: 2887535
+url: https://victortran.shinyapps.io/Test-Dashboard/
+when: 1584385360.00325
+asMultiple: FALSE
+asStatic: FALSE
