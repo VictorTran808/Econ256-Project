@@ -49,7 +49,7 @@ censusInc$Household_Inc[is.na(censusInc$Household_Inc)] = 0
 #__________________________Import Graphic & Icons Here_____________________________
 #Import Icon
 PV_Icon <- makeIcon(
-    iconUrl = "Images/pv_icon.png",
+    iconUrl = "www/pv_icon.png",
     iconWidth = 30, iconHeight = 30
     
 )
@@ -111,12 +111,14 @@ ui <- dashboardPage(title = "Dashboard-test", skin = "green",
                         
                         sidebarMenu(
                             #menuItem("Dashboard Menu", tabName = "Dashboard_Menu"),
+                            menuItem("Home Menu", tabName = "Progress"),
                             menuSubItem("PV", tabName = "PV"),
                             menuSubItem("EV", tabName = "EV"),
                             menuSubItem("Income", tabName = "Income"), 
                             menuSubItem("House Price", tabName = "House_Price"), 
                             menuSubItem("Electric Usage", tabName = "Electric_Usage"),
-                            menuSubItem("Solar Intensity", tabName = "Solar_Intensity")
+                            menuSubItem("Solar Intensity", tabName = "Solar_Intensity"),
+                            menuSubItem("Analysis", tabName = "Analysis")
                             
                         )
                         
@@ -126,9 +128,11 @@ ui <- dashboardPage(title = "Dashboard-test", skin = "green",
                     #The dashboardBody is where we call function we make in the server code black to be shown on the shiny app
                     #For example: In tabItem, where tabName = PV, I call the function leafletoutput("map"), where "map" is a variable I made in 
                     #the server code block called output$map
-                    #Do the same for all the tabItem
+                    #Do the same for all the tabItem 
                     dashboardBody(
                         tabItems(
+                                tabItem(tabName = "Progress",h1("Documentation"), fluidPage(includeHTML("www/Progress.html"))),
+                            
                                 tabItem(tabName = "PV",h1("PV"), fluidRow(box(title = "PV location on Oahu",
                                                                               solidHeader = TRUE,
                                                                               background = "olive",
@@ -145,7 +149,9 @@ ui <- dashboardPage(title = "Dashboard-test", skin = "green",
 
                                 tabItem(tabName = "Electric_Usage",h1("Electric Usage")),
 
-                                tabItem(tabName = "Solar_Intensity",h1("Solar Intensity"))
+                                tabItem(tabName = "Solar_Intensity",h1("Solar Intensity")),
+                                
+                               tabItem(tabName = "Analysis",h1("Analysis"), fluidPage(includeHTML("www/regupdate.html")))
                             
                         )
                           
@@ -193,6 +199,7 @@ server <- function(input, output) {
                       opacity = 1) %>%
             addTiles()
     })
+    
     
     #__________________________________________________________________________________________
     #Lenny & Elenor, pls write your function below when you are ready with your data

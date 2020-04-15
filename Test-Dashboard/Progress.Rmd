@@ -1,0 +1,94 @@
+---
+title: "Progress Report"
+author: "Victor Tran, Eleanor Yuan, Lenny Linsky"
+date: "4/7/2020"
+output: html_document
+---
+
+# Summary/ goals:  
+What is a good predictor for who is more likely to install photovoltaic panels in Hawaii?
+(we are currently considering using income, solar intensity, electricity usage, property value)
+We also might add on EV in addition to PV if data becomes available, although it might be unlikely because of the COVID situation currently.  
+
+# What we did so far:  
+
+### Data Collection  
+***   
+We got our PV data from our Instructor Justin  
+Retrieve our shapefile data of O’ahu from TIGER/ Census  
+Retrieve O’ahu median income per household data from American community survey using the American community survey API with R.  
+Retrieve Solar radiation/ intensity data from the Hawaii GIS data portal  
+Retrieve O’ahu Housing Index from Zillow database  
+Retrieve O’ahu monthly electricity data by zip code from HECO   
+
+### Data Cleaning  
+
+***    
+
+**O’ahu tract data**    
+- Clean up the O’ahu map shape file by filtering the data to Honolulu county level and year to 2018  
+- Remove the Northern Hawaiian Island that is included at the Honolulu county level.  
+- Remove unnecessary or redundant attributes such as land area, water area, state, and county name.  
+
+**ACS 2018 Income Data**    
+- Rename the GEOID column to do a left join with our ACS 2018 Income data.  
+- Clean up the GEOID data in ACS 2018 Income, by parsing out “1400000US”   
+- Combine ACS 2018 Income with O’ahu tract data by left-joining ‘GEOID’  
+
+**PV data**  
+- Filter out unnecessary column variables  
+- Convert PV longitude & latitude to spatial object  
+- Set PV coordinate reference system (CRS) to match with O’ahu tract (CRS)  
+- Perform a spatial join intersect to combine attributes from O’ahu tract/ Income data together with PV.  
+- Set PV CRS to match O’ahu zip code shapefile  
+- Perform a spatial join to combine zip code data to PV  
+
+**Zillow Home Index**    
+- Use table function to get number of PV per Zip Code and turn it into a dataframe  
+- Joined with Master Data  
+
+**Monthly Electricity O’ahu**    
+- Obtained data from HECO on average electricity usage per zip code in 2016 (suitable for use in informal/unofficial analysis only)  
+- Combined data to zip code shape file and master data  
+
+**Solar Radiation O’ahu**     
+- Remove unnecessary attribute column  
+- Perform a spatial data join to combine average solar radiation data to PV in master data   
+
+### Data Visualization
+*** 
+- Created a leaflet choropleth map of income  
+- Created a choropleth map of electricity  
+- Created a leaflet cluster map of PV installation  
+- Create summary table of our multiple regression  
+- Created a rough framework of our testing dashboard web app to host our project  
+
+### Data Analysis
+*** 
+Created a dependent variable by homes with pv/total homes per zip code. This allowed us to test relationships between zip code specific characteristics and pv concentration. 
+Then ran a best subsets function to determine best 1,2,3, and 4 variable models (Zillow Home Value Index, Median Income, Solar Radiation, and KwH usage per month. 
+Then according to Adjusted R^2 and BIC we determined that the 4 variable model best captured the relationship. 
+We then ran 8 total regressions, the best 1,2,3, and 4 variable models and log-log versions of them. 
+What we found in the 4 variable log-log model is that for every once percent increase in the zillow home value index holding median income, solar radiation, and kwh usage, results in a %1.3 pv increase in PV adoption. Both median income and solar radiation show positive relationships with electricity usage being an inverse relationship. All are statistically significant even after adjusting for heteroskedasticity. Simply put, more affluent areas have more pv solar. 
+Data Source: 
+
+### Data Source
+*** 
+- Zillow Database  
+- HECO email  
+- Hawaii GeoSpatial Data Portal  
+- US Census & ACS  
+
+
+# Future Plan:
+*** 
+- Adding a housing type (if available)  
+- Adding education level  
+- Further update the app/website (create more interactive maps) & more features & UI/UX design
+- Currently working on additional map/ chart  
+- Creating a way to generate a probability of pv installations according to zipcode (based on the factors we measured)  
+- (maybe) try to attempt a spatial regression model  
+
+# Problem/Issues: 
+*** 
+Is it far enough in scope and deep enough in analysis? Maybe do a fixed effects regression for zipcode effects. Any other avenues of analysis? Any suggestions on how to generate the probability model of having PV installed (do you think our current/planned data and steps are enough)?

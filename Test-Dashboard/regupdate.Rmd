@@ -1,0 +1,102 @@
+---
+title: "ECON 256 Project Regression Package"
+author: "Eleanor, Victor, Lenny"
+date: "April 9, 2020"
+output: html_document
+---
+# Data Analysis Summary  
+![Result](C:/Users/calamity/Documents/R_Research/Econ256-Project/Test-Dashboard/www/Result.png)
+
+
+![Log Result](C:/Users/calamity/Documents/R_Research/Econ256-Project/Test-Dashboard/www/Log_Results.png)
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+#setwd("C:\\Users\\jahle\\OneDrive\\Desktop\\ECON 256")
+library(sf)
+library(tidyverse)
+library(leaps)
+library(car)
+library(AER)
+library(stargazer)
+
+data <- read_sf(dsn = "masterdataV3", layer = "masterdataV3")
+
+
+new <- as.data.frame(data)
+View(new)
+
+
+newnew <- select(new, ratio,Z_H_I_V,kWh_mo,avg_S_R,Mdn_Inc,Nm_Hm_U,PV_pr_Z)
+View(newnew)
+
+```
+#Finding best subset for regression 
+```{r echo = TRUE, message=TRUE, warning=FALSE}
+
+bestmodels <- regsubsets(ratio~., data = newnew
+                        [,c("ratio","Z_H_I_V","kWh_mo","avg_S_R","Mdn_Inc")], 
+                        nvmax = 4)
+summary(bestmodels)
+#best model based on residual diagnostics 
+res.sum <- summary(bestmodels)
+data.frame(
+  Adj.R2 = which.max(res.sum$adjr2),
+  CP = which.min(res.sum$cp),
+  BIC = which.min(res.sum$bic)
+)
+```
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#More intutive Variable Names 
+newnew$zillowhomevalueindex <- newnew$Z_H_I_V
+newnew$kwhpermonth <- newnew$kWh_mo
+newnew$avgsolarradiation <- newnew$avg_S_R
+newnew$medianincome <- newnew$Mdn_Inc
+newnew$percentpv <- newnew$ratio*100
+regressiondata <- newnew
+View(regressiondata)
+```
+
+##Best Regression Models for each number of variables and robust se's 
+```{r echo=TRUE, message=TRUE, warning=FALSE}
+#Regression 1:  Percent PV = Zillow Home Value Index 
+onelm <- lm(percentpv ~ zillowhomevalueindex , regressiondata)
+summary(onelm)
+coeftest(onelm, vcov = vcovHC(onelm))
+
+#Regression 2: Log(Percent PV) = Log(Zillow Home Value Index)
+twolm <- lm( log(percentpv) ~ log(zillowhomevalueindex) , regressiondata)
+summary(twolm)
+coeftest(twolm, vcov = vcovHC(twolm))   
+
+#Regression 3 : Percent PV = Zillow Home Value Index + Median Income 
+threelm <- lm( percentpv ~ zillowhomevalueindex+ medianincome, regressiondata)
+summary(threelm)
+coeftest(threelm, vcov = vcovHC(threelm))
+
+#Regression 4:Log(Percent PV) = Log(Zillow Home Value Index) +Log(Median Income) 
+fourlm <- lm(log(percentpv) ~ log(zillowhomevalueindex) + log(medianincome), regressiondata)
+summary(fourlm)
+coeftest(fourlm, vcov = vcovHC(fourlm))
+
+#Regression 5: Percent PV = Zillow Home Value Index + Median Income + Average Solar Radiation 
+fivelm <- lm(percentpv ~ zillowhomevalueindex + medianincome + avgsolarradiation, regressiondata)
+summary(fivelm)
+coeftest(fivelm, vcov = vcovHC(fivelm))
+
+#Regression 6: Log(Percent PV) = Log(Zillow Home Value Index) + Log(Median Income) + Log(Average Solar Radiation)
+sixlm <- lm(log(percentpv) ~ log(zillowhomevalueindex) + log(medianincome) + log(avgsolarradiation), regressiondata)
+summary(sixlm)
+coeftest(sixlm, vcov = vcovHC(sixlm))
+
+#Regression 7: Percent PV = Zillow Home Value Index + Median Income + Average Solar Radiation + KwH Per Month 
+sevenlm <- lm(percentpv ~ zillowhomevalueindex + medianincome + avgsolarradiation + kwhpermonth, regressiondata)
+summary(sevenlm)
+coeftest(sevenlm, vcov = vcovHC(sevenlm))
+
+#Regression 8: Log(Percent PV) = Log(Zillow Home Value Index) + Log(Median Income) + Log(Average Solar Radiation) + Log(KwH Per Month)
+eightlm <- lm(log(percentpv) ~ log(zillowhomevalueindex) + log(medianincome) + log(avgsolarradiation) + log(kwhpermonth), regressiondata)
+summary(eightlm)
+coeftest(eightlm, vcov = vcovHC(eightlm))
+```
