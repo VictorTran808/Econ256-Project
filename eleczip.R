@@ -1,9 +1,6 @@
 
 
 
-
-
-
 library(sf) #simple feature
 
 #NEW CODE
@@ -15,8 +12,4 @@ ggplot()+
   theme_void()+
   labs(title = "Average Electricity Used per Month According to Zip Code", caption = "Data Source: HECO & City and County of Honolulu", fill = "kWh per Month")+
   geom_sf(data = pvdata, color = "dodgerblue4") #ALL pv points
-
-
-
-
 
