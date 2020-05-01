@@ -1,8 +1,9 @@
 
 library(sf)
 library(ggplot2)
+library(tidyverse)
 
-####NEW
+#SORTING/CLEANING
 eduzip <- read.csv("nhgis0007_ds239_20185_2018_zcta.csv") #ACS 2014-2018 Estimates 25 yrs old +
 eduzip$ZIP <- as.character(eduzip$ZCTA5A)
 eduzip <- select(eduzip, "GISJOIN", "ZIP", "AJYPE001",
@@ -13,24 +14,20 @@ zips <- read_sf(dsn = "zips", layer = "zips")
 eduzip <- left_join(zips, eduzip, by = "ZIP")
 eduzip$college <- eduzip$AJYPE022 + eduzip$AJYPE023 + eduzip$AJYPE024 + eduzip$AJYPE025
 eduzip$percollege <- eduzip$college/eduzip$AJYPE001
-eduzip <- select(eduzip,"ZIP", "college", "percollege")
+tidy_edu <- select(eduzip,"ZIP", "college", "percollege")
 pvdata <- read_sf(dsn = "solarzip", layer = "solarzip") #zipcodes of ALL solar projects
-  
+
+#st_write(tidy_edu, dsn = "tidy_edu", layer = "tidy_edu", driver = "ESRI Shapefile")
+#check <- read_sf(dsn = "tidy_edu", layer = "tidy_edu")
+
+#PLOTTING
 ggplot()+
-  geom_sf(data = eduzip, aes(fill = eduzip$percollege))+
+  geom_sf(data = tidy_edu, aes(fill = tidy_edu$percollege))+
   scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = NA)+
   theme_void()+
   labs(title = "Estimated Percent of Population with 
 at least a Bachelor's Degree According to Zip Code", caption = "Data Source: IPUMS ACS & City and County of Honolulu", fill = "Estimated Percentage")+
   geom_sf(data = pvdata, color = "black") #ALL pv points
-
-
-tidy_edu <- eduzip
-st_write(tidy_edu, dsn = "tidy_edu", layer = "tidy_edu", driver = "ESRI Shapefile")
-check <- read_sf(dsn = "tidy_edu", layer = "tidy_edu")
-
-
-
 
 
 
