@@ -17,6 +17,8 @@ eduzip$percollege <- eduzip$college/eduzip$AJYPE001
 tidy_edu <- select(eduzip,"ZIP", "college", "percollege")
 pvdata <- read_sf(dsn = "solarzip", layer = "solarzip") #zipcodes of ALL solar projects
 
+tidy_edu$percent <- tidy_edu$percollege*100
+
 #st_write(tidy_edu, dsn = "tidy_edu", layer = "tidy_edu", driver = "ESRI Shapefile")
 #check <- read_sf(dsn = "tidy_edu", layer = "tidy_edu")
 
