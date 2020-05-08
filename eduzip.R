@@ -22,14 +22,17 @@ tidy_edu$percent <- tidy_edu$percollege*100
 #st_write(tidy_edu, dsn = "tidy_edu", layer = "tidy_edu", driver = "ESRI Shapefile")
 #check <- read_sf(dsn = "tidy_edu", layer = "tidy_edu")
 
+tidy_edu <- read_sf(dsn = "tidy_edu", layer = "tidy_edu")
+
+
 #PLOTTING
 ggplot()+
-  geom_sf(data = tidy_edu, aes(fill = tidy_edu$percollege))+
-  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = NA)+
+  geom_sf(data = tidy_edu, aes(fill = tidy_edu$percent))+
+  scale_fill_gradient(low = "darkolivegreen1", high = "darkgreen", na.value = NA)+
   theme_void()+
   labs(title = "Estimated Percent of Population with 
 at least a Bachelor's Degree According to Zip Code", caption = "Data Source: IPUMS ACS & City and County of Honolulu", fill = "Estimated Percentage")+
-  geom_sf(data = pvdata, color = "black") #ALL pv points
+  geom_sf(data = pvdata, color = "black", size = 1) #ALL pv points
 
 
 
